@@ -3,7 +3,18 @@ const express = require('express');
 
 const app = express();
 
-app.use(express.json());
+app.use(express.json()); //app.use is used to add middleware. express.json() function is added to middleware stack
+
+app.use((req, res, next) => {
+  //custom middleware. Middleware functions has access of req, res and next as well
+  console.log('Hello from the middleware!!');
+  next(); //next is important to specify else it will block the middleware stack(req/res cycle). Response will never be sent to client if no next() is present
+}); //This middleware applies to each and every request on the server
+
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+}); //Another custom middleware
 
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
@@ -12,6 +23,7 @@ const tours = JSON.parse(
 const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
+    requestedAt: req.requestTime, //use of middleware for date
     results: tours.length,
     data: {
       tours: tours,
@@ -83,15 +95,7 @@ const deleteTour = (req, res) => {
   });
 };
 
-//Handler separated from routes
-
-// app.get('/api/v1/tours', getAllTours);
-// app.get('/api/v1/tours/:id', getTour);
-// app.post('/api/v1/tours', createTour);
-// app.patch('/api/v1/tours/:id', updateTour);
-// app.delete('/api/v1/tours/:id', deleteTour);
-
-app.route('/api/v1/tours').get(getAllTours).post(createTour); // Used to chain all the different HTTP methods with same route
+app.route('/api/v1/tours').get(getAllTours).post(createTour);
 app
   .route('/api/v1/tours/:id')
   .get(getTour)
