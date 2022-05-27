@@ -1,20 +1,22 @@
 const fs = require('fs');
 const express = require('express');
+const morgan = require('morgan');
 
 const app = express();
 
-app.use(express.json()); //app.use is used to add middleware. express.json() function is added to middleware stack
+app.use(morgan('dev')); // Third party middleware. Used to log the complete details of the request in the console. Like - GET /api/v1/tours 200 2.417 ms - 8683
+
+app.use(express.json());
 
 app.use((req, res, next) => {
-  //custom middleware. Middleware functions has access of req, res and next as well
   console.log('Hello from the middleware!!');
-  next(); //next is important to specify else it will block the middleware stack(req/res cycle). Response will never be sent to client if no next() is present
-}); //This middleware applies to each and every request on the server
+  next();
+});
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
-}); //Another custom middleware
+});
 
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
@@ -23,7 +25,7 @@ const tours = JSON.parse(
 const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
-    requestedAt: req.requestTime, //use of middleware for date
+    requestedAt: req.requestTime,
     results: tours.length,
     data: {
       tours: tours,
