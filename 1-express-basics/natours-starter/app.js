@@ -1,4 +1,3 @@
-//This code has become a mess as all the routes and controllers/handlers are in the same place
 const fs = require('fs');
 const express = require('express');
 const morgan = require('morgan');
@@ -8,11 +7,6 @@ const app = express();
 app.use(morgan('dev'));
 
 app.use(express.json());
-
-app.use((req, res, next) => {
-  console.log('Hello from the middleware!!');
-  next();
-});
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
@@ -97,7 +91,7 @@ const deleteTour = (req, res) => {
     data: null,
   });
 };
-// Route handlers for user routes
+
 const getAllUsers = (req, res) => {
   res.status(500).json({
     status: 'error',
@@ -129,19 +123,17 @@ const deleteUser = (req, res) => {
   });
 };
 
-app.route('/api/v1/tours').get(getAllTours).post(createTour);
-app
-  .route('/api/v1/tours/:id')
-  .get(getTour)
-  .patch(updateTour)
-  .delete(deleteTour);
+const tourRouter = express.Router(); // Router (like a sub application) is created for the easy separation of the code. This tourRouter is a middleware function
+const userRouter = express.Router();
 
-app.route('/api/v1/users').get(getAllUsers).post(createUser); //Implementing user routes same as tour routes
-app
-  .route('/api/v1/users/:id')
-  .get(getUser)
-  .patch(updateUser)
-  .delete(deleteUser);
+tourRouter.route('/').get(getAllTours).post(createTour); // Take care now for the routes here
+tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour); // Take care now for the routes here
+
+userRouter.route('/').get(getAllUsers).post(createUser);
+userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
+
+app.use('/api/v1/tours', tourRouter); // Since tourRouter router is a middleware function, therefore app.use
+app.use('/api/v1/users', userRouter);
 
 const port = 3000;
 app.listen(port, () => {
