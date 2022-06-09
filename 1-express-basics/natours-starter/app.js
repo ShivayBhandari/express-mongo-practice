@@ -1,10 +1,11 @@
+//This code has become a mess as all the routes and controllers/handlers are in the same place
 const fs = require('fs');
 const express = require('express');
 const morgan = require('morgan');
 
 const app = express();
 
-app.use(morgan('dev')); // Third party middleware. Used to log the complete details of the request in the console. Like - GET /api/v1/tours 200 2.417 ms - 8683
+app.use(morgan('dev'));
 
 app.use(express.json());
 
@@ -96,6 +97,37 @@ const deleteTour = (req, res) => {
     data: null,
   });
 };
+// Route handlers for user routes
+const getAllUsers = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route is not yet defined',
+  });
+};
+const createUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route is not yet defined',
+  });
+};
+const getUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route is not yet defined',
+  });
+};
+const updateUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route is not yet defined',
+  });
+};
+const deleteUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route is not yet defined',
+  });
+};
 
 app.route('/api/v1/tours').get(getAllTours).post(createTour);
 app
@@ -103,6 +135,13 @@ app
   .get(getTour)
   .patch(updateTour)
   .delete(deleteTour);
+
+app.route('/api/v1/users').get(getAllUsers).post(createUser); //Implementing user routes same as tour routes
+app
+  .route('/api/v1/users/:id')
+  .get(getUser)
+  .patch(updateUser)
+  .delete(deleteUser);
 
 const port = 3000;
 app.listen(port, () => {
