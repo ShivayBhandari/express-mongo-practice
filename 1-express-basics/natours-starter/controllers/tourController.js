@@ -5,11 +5,21 @@ const tours = JSON.parse(
 );
 
 exports.checkID = (req, res, next, val) => {
-  //Use of param middleware. Controller function exported to tourRoutes
   if (req.params.id * 1 > tours.length) {
     return res.status(404).json({
       status: 'fail',
       message: 'Invalid ID!',
+    });
+  }
+  next();
+};
+
+//function declaration and export for chaining multiple middleware
+exports.checkBody = (req, res, next) => {
+  if (!req.body.name || !req.body.price) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'name or price missing',
     });
   }
   next();

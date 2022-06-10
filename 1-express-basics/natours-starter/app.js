@@ -1,5 +1,3 @@
-// Param middleware is a middleware that only runs for certain parameters
-
 const express = require('express');
 const morgan = require('morgan');
 
