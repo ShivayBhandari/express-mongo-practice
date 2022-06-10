@@ -10,6 +10,8 @@ app.use(morgan('dev'));
 
 app.use(express.json());
 
+app.use(express.static(`${__dirname}/public`)); // Express middleware to serve the static files. public folders becomes the root location in this case to serve the all static files on our api
+
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();

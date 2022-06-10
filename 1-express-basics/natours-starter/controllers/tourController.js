@@ -14,7 +14,6 @@ exports.checkID = (req, res, next, val) => {
   next();
 };
 
-//function declaration and export for chaining multiple middleware
 exports.checkBody = (req, res, next) => {
   if (!req.body.name || !req.body.price) {
     return res.status(400).json({
